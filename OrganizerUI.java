@@ -1,3 +1,5 @@
+import com.teamtreehouse.model.Player;
+import com.teamtreehouse.model.Players;
 import com.teamtreehouse.model.Team;
 
 import java.io.BufferedReader;
@@ -8,22 +10,22 @@ import java.util.*;
 /**
  * Created by ggisbert on 3/12/17.
  */
-public class LeagueManagerUI {
+public class OrganizerUI {
 
 
     Map<String, Team> mLeague;
-
+    public static final int MAX_PLAYERS = 11;
     private BufferedReader mReader;
+    private List<Player> mPlayersList;
 
     private Map<String, String> mMenu;
 
-
-    public LeagueManagerUI(Map<String, Team> league) {
+    public OrganizerUI(Map<String, Team> league,List<Player> playersList) {
 
         mLeague = new HashMap<String, Team>();
 
         mReader = new BufferedReader(new InputStreamReader(System.in));
-
+        mPlayersList = playersList;
         mMenu = new HashMap<String, String>();
 
         mMenu.put("Create Team", "Create a new team. Required fields are team name and coach.");
@@ -82,43 +84,74 @@ public class LeagueManagerUI {
 
     }
 
-    public void createTeam() {
+    public void createTeam() throws IOException {
         String teamName = null;
         boolean exists = true;
-        try {
-            while (exists == true) {
+        while (exists == true) {
 
-                System.out.println("Please enter the name of the Team");
-                teamName = mReader.readLine();
+            System.out.println("Please enter the name of the Team");
+            teamName = mReader.readLine();
 
-                if (mLeague.containsKey(teamName)) {
-                    System.out.println("The name you choose already exists");
-                } else {
-                    exists = false;
-                }
+            if (mLeague.containsKey(teamName)) {
+                System.out.println("The name you choose already exists");
+            } else {
+                exists = false;
             }
-
-            System.out.println("Please enter the name of the Coach");
-            String coachName = mReader.readLine();
-
-            Team team = new Team(teamName, coachName);
-            mLeague.put(teamName, team);
-
-        } catch (IOException ioe) {
-            System.out.println("Problem with input");
-            ioe.printStackTrace();
         }
+
+        System.out.println("Please enter the name of the Coach");
+        String coachName = mReader.readLine();
+
+        Team team = new Team(teamName, coachName);
+        mLeague.put(teamName, team);
     }
 
 
-    public void addPlayer() {
+    public void addPlayer() throws IOException {
+
         System.out.println("Check this list to see in which team do you want to Add the Player ");
         promtTeamsFromLeagueOrdered();
+
+        System.out.println("Please enter the name of the Team Where you want to add the player");
+        String teamName = mReader.readLine();
+
+        if (mLeague.containsKey(teamName)) {
+            Team team = mLeague.get(teamName);
+            promptPlayersFromTeamOrdered();
+            if (team.getmPlayers().size() > MAX_PLAYERS){
+                System.out.println("The team is Full, please start all over again");
+            }else {
+               addPlayerToTheTeam(team);
+            }
+
+        } else {
+            System.out.println("The name doesn't exist, please start all over again");
+        }
+
+    }
+
+    private void addPlayerToTheTeam(Team team) throws IOException {
+        System.out.println("Select the Last Name of the player lists you want to add");
+        String lastName = mReader.readLine();
+        boolean added = false;
+        Iterator<Player> playerIterator = mPlayersList.iterator();
+        while (playerIterator.hasNext() && added == false) {
+            if (playerIterator.next().getLastName().equals(lastName)){
+                team.getmPlayers().add(playerIterator.next());
+                added = true;
+                System.out.println("Players Added in team: " + team.getmName() );
+            }
+        }
+
+        if (added == false) {
+            System.out.println("Player couldn't be added " + team.getmName());
+        }
     }
 
     public void removePlayer() {
         System.out.println("Check this list to see in which team do you want to Remove the Player ");
         promtTeamsFromLeagueOrdered();
+
     }
 
     public void promtTeamsFromLeagueOrdered() {
@@ -135,7 +168,13 @@ public class LeagueManagerUI {
 
     }
 
-    public void promptPlayersFromTeam(Team team) {
+    public void promptPlayersFromTeamOrdered() {
+            Collections.sort(mPlayersList);
 
+            for (Player player : mPlayersList) {
+                System.out.println(player.getFirstName() + " " + player.getLastName() +
+                        " height:" + player.getHeightInInches() +
+                        " previous Exp:" + player.isPreviousExperience());
+            }
     }
 }

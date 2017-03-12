@@ -30,13 +30,6 @@ public class Team implements Comparable<Team> {
 
     }
 
-
-    public HashSet<Player> getTeamPlayersByOrder() {
-
-        return result;
-
-    }
-
     public String getmName() {
         return mName;
     }
