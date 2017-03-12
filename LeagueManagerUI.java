@@ -3,8 +3,7 @@ import com.teamtreehouse.model.Team;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by ggisbert on 3/12/17.
@@ -19,7 +18,7 @@ public class LeagueManagerUI {
     private Map<String, String> mMenu;
 
 
-    public LeagueManagerUI(Map<String,Team> league) {
+    public LeagueManagerUI(Map<String, Team> league) {
 
         mLeague = new HashMap<String, Team>();
 
@@ -58,9 +57,15 @@ public class LeagueManagerUI {
                 switch (choice) {
                     case "Create Team":
                         // TODO : Add the functionality to create the team
+                        createTeam();
                         break;
                     case "Add a Player":
                         // TODO : Add the functionality to add the player to a team
+                        addPlayer();
+                        break;
+                    case "Remove Player":
+                        // TODO : Add the functionality to add the player to a team
+                        removePlayer();
                         break;
                     case "quit":
                         System.out.println("Thanks for your help");
@@ -77,26 +82,60 @@ public class LeagueManagerUI {
 
     }
 
-    public void createTeam(){
+    public void createTeam() {
+        String teamName = null;
+        boolean exists = true;
+        try {
+            while (exists == true) {
 
+                System.out.println("Please enter the name of the Team");
+                teamName = mReader.readLine();
 
-        Team team = new Team();
+                if (mLeague.containsKey(teamName)) {
+                    System.out.println("The name you choose already exists");
+                } else {
+                    exists = false;
+                }
+            }
 
-    }
+            System.out.println("Please enter the name of the Coach");
+            String coachName = mReader.readLine();
 
+            Team team = new Team(teamName, coachName);
+            mLeague.put(teamName, team);
 
-    public void addPlayer(){
-
-    }
-
-    public void promtTeamsFromLeagueOrdered() {
-
-        for (Map.Entry<String, Team> option : mLeague.entrySet()) {
-            System.out.printf("%s - %s %m", option.getKey(), option.getValue());
+        } catch (IOException ioe) {
+            System.out.println("Problem with input");
+            ioe.printStackTrace();
         }
     }
 
-    public void promptPlayersFromTeam(Team team){
+
+    public void addPlayer() {
+        System.out.println("Check this list to see in which team do you want to Add the Player ");
+        promtTeamsFromLeagueOrdered();
+    }
+
+    public void removePlayer() {
+        System.out.println("Check this list to see in which team do you want to Remove the Player ");
+        promtTeamsFromLeagueOrdered();
+    }
+
+    public void promtTeamsFromLeagueOrdered() {
+        List<Team> teamsOrderBy = new ArrayList<Team>();
+
+        for (Map.Entry<String, Team> option : mLeague.entrySet()) {
+            teamsOrderBy.add(option.getValue());
+        }
+        Collections.sort(teamsOrderBy);
+
+        for (Team team : teamsOrderBy) {
+            System.out.println(team.getmName());
+        }
+
+    }
+
+    public void promptPlayersFromTeam(Team team) {
 
     }
 }
