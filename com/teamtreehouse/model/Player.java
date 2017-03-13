@@ -40,7 +40,7 @@ public class Player implements Comparable<Player>, Serializable {
         if (res != 0) {
             return res;
         }
-        return other.getLastName().compareToIgnoreCase(this.getLastName());
+        return other.getFirstName().compareToIgnoreCase(this.getFirstName());
     }
 
     @Override
