@@ -20,7 +20,7 @@ public class OrganizerUI {
 
     private Map<String, String> mMenu;
 
-    public OrganizerUI(Map<String, Team> league,List<Player> playersList) {
+    public OrganizerUI(Map<String, Team> league, List<Player> playersList) {
 
         mLeague = new HashMap<String, Team>();
 
@@ -58,16 +58,16 @@ public class OrganizerUI {
                 choice = promptAction();
                 switch (choice) {
                     case "Create Team":
-                        // TODO : Add the functionality to create the team
                         createTeam();
                         break;
                     case "Add a Player":
-                        // TODO : Add the functionality to add the player to a team
                         addPlayer();
                         break;
                     case "Remove Player":
-                        // TODO : Add the functionality to add the player to a team
                         removePlayer();
+                        break;
+                    case "Generate Report":
+                        generateReport();
                         break;
                     case "quit":
                         System.out.println("Thanks for your help");
@@ -84,9 +84,37 @@ public class OrganizerUI {
 
     }
 
+    private void generateReport() throws IOException {
+
+        System.out.println("Please enter the name of the Team Where you want to add the player");
+        String teamName = mReader.readLine();
+        List<Player> playersOrderBy = new ArrayList<Player>();
+
+        if (mLeague.containsKey(teamName)) {
+            Team team = mLeague.get(teamName);
+
+            for (Player player : team.getmPlayers()) {
+                playersOrderBy.add(player);
+            }
+
+            playersOrderBy.sort((left, right) -> left.getHeightInInches() - right.getHeightInInches());
+
+            for (Player player : playersOrderBy) {
+                System.out.println(player.getFirstName() + " " + player.getLastName() +
+                        " height:" + player.getHeightInInches() +
+                        " previous Exp:" + player.isPreviousExperience());
+            }
+
+        } else {
+            System.out.println("The name doesn't exist, please start all over again");
+        }
+
+    }
+
     public void createTeam() throws IOException {
         String teamName = null;
         boolean exists = true;
+
         while (exists == true) {
 
             System.out.println("Please enter the name of the Team");
@@ -99,13 +127,13 @@ public class OrganizerUI {
             }
         }
 
+
         System.out.println("Please enter the name of the Coach");
         String coachName = mReader.readLine();
 
         Team team = new Team(teamName, coachName);
         mLeague.put(teamName, team);
     }
-
 
     public void addPlayer() throws IOException {
 
@@ -118,10 +146,10 @@ public class OrganizerUI {
         if (mLeague.containsKey(teamName)) {
             Team team = mLeague.get(teamName);
             promptPlayersFromTeamOrdered();
-            if (team.getmPlayers().size() > MAX_PLAYERS){
+            if (team.getmPlayers().size() > MAX_PLAYERS) {
                 System.out.println("The team is Full, please start all over again");
-            }else {
-               addPlayerToTheTeam(team);
+            } else {
+                addPlayerToTheTeam(team);
             }
 
         } else {
@@ -136,10 +164,10 @@ public class OrganizerUI {
         boolean added = false;
         Iterator<Player> playerIterator = mPlayersList.iterator();
         while (playerIterator.hasNext() && added == false) {
-            if (playerIterator.next().getLastName().equals(lastName)){
+            if (playerIterator.next().getLastName().equals(lastName)) {
                 team.getmPlayers().add(playerIterator.next());
                 added = true;
-                System.out.println("Players Added in team: " + team.getmName() );
+                System.out.println("Players Added in team: " + team.getmName());
             }
         }
 
@@ -169,12 +197,17 @@ public class OrganizerUI {
     }
 
     public void promptPlayersFromTeamOrdered() {
-            Collections.sort(mPlayersList);
+        Collections.sort(mPlayersList);
 
-            for (Player player : mPlayersList) {
-                System.out.println(player.getFirstName() + " " + player.getLastName() +
-                        " height:" + player.getHeightInInches() +
-                        " previous Exp:" + player.isPreviousExperience());
-            }
+        printPlayersList();
     }
+
+    private void printPlayersList() {
+        for (Player player : mPlayersList) {
+            System.out.println(player.getFirstName() + " " + player.getLastName() +
+                    " height:" + player.getHeightInInches() +
+                    " previous Exp:" + player.isPreviousExperience());
+        }
+    }
+
 }
