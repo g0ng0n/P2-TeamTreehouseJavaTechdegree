@@ -1,53 +1,20 @@
 import com.teamtreehouse.model.Player;
-import com.teamtreehouse.model.Players;
 import com.teamtreehouse.model.Team;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.*;
 
 /**
  * Created by ggisbert on 3/12/17.
  */
-public class OrganizerUI {
+public class OrganizerUiDefault extends UiDefault {
 
 
-    Map<String, Team> mLeague;
-    public static final int MAX_PLAYERS = 11;
-    private BufferedReader mReader;
-    private List<Player> mPlayersList;
-
-    private Map<String, String> mMenu;
-
-    public OrganizerUI(Map<String, Team> league, List<Player> playersList) {
-
-        mLeague = new HashMap<String, Team>();
-
-        mReader = new BufferedReader(new InputStreamReader(System.in));
-        mPlayersList = playersList;
-        mMenu = new HashMap<String, String>();
-
-        mMenu.put("Create Team", "Create a new team. Required fields are team name and coach.");
-        mMenu.put("Add a Player", "Add a new player to the team.");
-        mMenu.put("Remove Player", "Remove a Player. ");
-        mMenu.put("Create Team", "Create a new team. Required fields are team name and coach.");
+    public OrganizerUiDefault(Map<String, Team> league, List<Player> playersList) {
+        super(league, playersList);
     }
 
 
-    private String promptAction() throws IOException {
-
-        for (Map.Entry<String, String> option : mMenu.entrySet()) {
-
-            System.out.printf("%s - %s %m", option.getKey(), option.getValue());
-        }
-
-        System.out.print("What do you want to do: ");
-        String choice = mReader.readLine();
-
-        return choice.trim().toLowerCase();
-
-    }
 
     public void run() {
 
@@ -69,8 +36,11 @@ public class OrganizerUI {
                     case "Generate Report":
                         generateReport();
                         break;
+                    case "League Balance Report":
+                        generateLeagueReport();
+                        break;
                     case "quit":
-                        System.out.println("Thanks for your help");
+                        System.out.println("Thanks Organizer back to the main menu");
                         break;
                     default:
                         System.out.printf("Unknown choice: '%s'. try Again. %n%n%n", choice);
@@ -84,10 +54,30 @@ public class OrganizerUI {
 
     }
 
+    private void generateLeagueReport() {
+        int totalExperiencedPlayers = 0;
+        int totalInexperiencedPlayers = 0;
+
+        for (Map.Entry<String, Team> option : mLeague.entrySet()) {
+
+            for (Player player : option.getValue().getmPlayers()) {
+                if (player.isPreviousExperience()){
+                    totalExperiencedPlayers++;
+                }else{
+                    totalInexperiencedPlayers++;
+                }
+            }
+        }
+        System.out.printf("Total Experienced Player In the League: '%s'. %n%n%n", totalExperiencedPlayers);
+        System.out.printf("Total Inexperienced Player In the League: '%s'. %n%n%n", totalInexperiencedPlayers);
+
+
+    }
+
     private void generateReport() throws IOException {
 
         System.out.println("Please enter the name of the Team Where you want to add the player");
-        String teamName = mReader.readLine();
+        String teamName = getmReader().readLine();
         List<Player> playersOrderBy = new ArrayList<Player>();
 
         if (mLeague.containsKey(teamName)) {
@@ -118,7 +108,7 @@ public class OrganizerUI {
         while (exists == true) {
 
             System.out.println("Please enter the name of the Team");
-            teamName = mReader.readLine();
+            teamName = getmReader().readLine();
 
             if (mLeague.containsKey(teamName)) {
                 System.out.println("The name you choose already exists");
@@ -129,7 +119,7 @@ public class OrganizerUI {
 
 
         System.out.println("Please enter the name of the Coach");
-        String coachName = mReader.readLine();
+        String coachName = getmReader().readLine();
 
         Team team = new Team(teamName, coachName);
         mLeague.put(teamName, team);
@@ -138,10 +128,10 @@ public class OrganizerUI {
     public void addPlayer() throws IOException {
 
         System.out.println("Check this list to see in which team do you want to Add the Player ");
-        promtTeamsFromLeagueOrdered();
+        promptTeamsFromLeagueOrdered();
 
         System.out.println("Please enter the name of the Team Where you want to add the player");
-        String teamName = mReader.readLine();
+        String teamName = getmReader().readLine();
 
         if (mLeague.containsKey(teamName)) {
             Team team = mLeague.get(teamName);
@@ -160,9 +150,9 @@ public class OrganizerUI {
 
     private void addPlayerToTheTeam(Team team) throws IOException {
         System.out.println("Select the Last Name of the player lists you want to add");
-        String lastName = mReader.readLine();
+        String lastName = getmReader().readLine();
         boolean added = false;
-        Iterator<Player> playerIterator = mPlayersList.iterator();
+        Iterator<Player> playerIterator = getmPlayersList().iterator();
         while (playerIterator.hasNext() && added == false) {
             if (playerIterator.next().getLastName().equals(lastName)) {
                 team.getmPlayers().add(playerIterator.next());
@@ -178,11 +168,11 @@ public class OrganizerUI {
 
     public void removePlayer() {
         System.out.println("Check this list to see in which team do you want to Remove the Player ");
-        promtTeamsFromLeagueOrdered();
+        promptTeamsFromLeagueOrdered();
 
     }
 
-    public void promtTeamsFromLeagueOrdered() {
+    public void promptTeamsFromLeagueOrdered() {
         List<Team> teamsOrderBy = new ArrayList<Team>();
 
         for (Map.Entry<String, Team> option : mLeague.entrySet()) {
@@ -197,13 +187,13 @@ public class OrganizerUI {
     }
 
     public void promptPlayersFromTeamOrdered() {
-        Collections.sort(mPlayersList);
+        Collections.sort(getmPlayersList());
 
         printPlayersList();
     }
 
     private void printPlayersList() {
-        for (Player player : mPlayersList) {
+        for (Player player : getmPlayersList()) {
             System.out.println(player.getFirstName() + " " + player.getLastName() +
                     " height:" + player.getHeightInInches() +
                     " previous Exp:" + player.isPreviousExperience());
