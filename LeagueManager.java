@@ -18,47 +18,46 @@ public class LeagueManager {
         List<Player> playersList = new ArrayList<Player>(Arrays.asList(players));
         Map<String, Team> league = new HashMap<String, Team>();
         Map<String, String> mMenu = new HashMap<String, String>();
-        System.out.printf("Select your Role");
 
-        mMenu.put("Coach", "Coach");
-        mMenu.put("Administrator", "Administrator");
-        mMenu.put("Organizer", "Administrator");
+        mMenu.put("1", "Coach");
+        mMenu.put("2", "Organizer");
+        mMenu.put("3", "quit the app");
 
-        for (Map.Entry<String, String> option : mMenu.entrySet()) {
-
-            System.out.printf("%s - %s %m", option.getKey(), option.getValue());
-        }
-
-        System.out.print("What do you want to do: ");
         String choice = "";
         do {
             try {
-                choice = mReader.readLine();
+                System.out.printf("Select a Role Option: %n%n");
+
+                for (Map.Entry<String, String> option : mMenu.entrySet()) {
+
+                    System.out.printf("%s - %s %n", option.getKey(), option.getValue());
+                }
+                choice = mReader.readLine().trim().toLowerCase();
 
                 switch (choice) {
-                    case "Organizer":
+                    case "1":
                         OrganizerUiDefault organizerUI = new OrganizerUiDefault(league, playersList);
                         organizerUI.run();
                         break;
-                    case "Administrator":
-                        AdminUI adminUI = new AdminUI(league, playersList);
-                        adminUI.run();
-                        break;
-                    case "Coach":
+                    case "2":
                         CoachUiDefault coachUI = new CoachUiDefault(league, playersList);
                         coachUI.run();
                         break;
-                    case "exit":
+                    case "0":
                         System.out.println("Thanks for using the League manager");
                         break;
                     default:
                         System.out.printf("Unknown choice: '%s'. try Again. %n%n%n", choice);
+                        System.out.printf("Select a New Option: %n");
+
                 }
+
+
             } catch (IOException ioe) {
                 System.out.println("Problem with input");
             }
 
-        } while (!choice.equals("exit"));
+        } while (!choice.equals("0"));
 
     }
 }

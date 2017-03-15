@@ -19,15 +19,17 @@ public class CoachUiDefault extends UiDefault {
     public void run() {
 
         String choice = "";
+        getmMenu().put("1", "Print Out Roster");
+        getmMenu().put("0", "Back to the Main Menu");
 
         do {
             try {
                 choice = promptAction();
                 switch (choice) {
-                    case "Print Out Roster":
+                    case "1":
                         printRoster();
                         break;
-                    case "quit":
+                    case "0":
                         System.out.println("Thanks Coach back to the main menu");
                         break;
                     default:
@@ -38,7 +40,7 @@ public class CoachUiDefault extends UiDefault {
                 ioe.printStackTrace();
             }
 
-        } while (!choice.equals("quit"));
+        } while (!choice.equals("0"));
 
     }
 

@@ -27,7 +27,7 @@ public class Team implements Comparable<Team> {
         this.mName = name;
 
         this.mCoach = coach;
-
+        mPlayers = new HashSet<Player>();
     }
 
     public String getmName() {

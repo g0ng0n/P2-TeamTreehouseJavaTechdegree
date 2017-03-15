@@ -23,26 +23,23 @@ public class UiDefault {
 
     public UiDefault(Map<String, Team> league, List<Player> playersList) {
 
-        mLeague = new HashMap<String, Team>();
+        mLeague = league;
 
         mReader = new BufferedReader(new InputStreamReader(System.in));
         mPlayersList = playersList;
         mMenu = new HashMap<String, String>();
 
-        mMenu.put("Create Team", "Create a new team. Required fields are team name and coach.");
-        mMenu.put("Add a Player", "Add a new player to the team.");
-        mMenu.put("Remove Player", "Remove a Player. ");
-        mMenu.put("Create Team", "Create a new team. Required fields are team name and coach.");
+
     }
 
     public String promptAction() throws IOException {
 
         for (Map.Entry<String, String> option : mMenu.entrySet()) {
 
-            System.out.printf("%s - %s %m", option.getKey(), option.getValue());
+            System.out.printf("%s - %s %n", option.getKey(), option.getValue());
         }
 
-        System.out.print("What do you want to do: ");
+        System.out.printf("What do you want to do: %n");
         String choice = mReader.readLine();
 
         return choice.trim().toLowerCase();
